@@ -2,10 +2,11 @@ package io.github.erinleonid3_collab;
 
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Main {
     public static void main(String[] args) {
-
+        new Main().test();
     }
 
     enum DayOfWeek {
@@ -41,8 +42,13 @@ public class Main {
         var benSheet = new WorkSheet("Бен", List.of(DayOfWeek.MONDAY, DayOfWeek.WEDNESDAY, DayOfWeek.SATURDAY));
         var lisSheet = new WorkSheet("Лиза", List.of(DayOfWeek.THURSDAY, DayOfWeek.WEDNESDAY, DayOfWeek.FRIDAY));
         var sheets = List.of(denSheet, benSheet, lisSheet);
-        // TODO: Необходимо вывести на экран дни в которые работало более 1 человека
-        // sheets.stream()
-        // .forEach(System.out::println);
+        sheets.stream()
+                .flatMap(s -> s.getWorkDays().stream())
+                .collect(Collectors.groupingBy(d -> d, Collectors.counting()))
+                .entrySet().stream()
+                .filter(e -> e.getValue() > 1)
+                .map(e -> e.getKey())
+                .sorted()
+                .forEach(System.out::println);
     }
 }
